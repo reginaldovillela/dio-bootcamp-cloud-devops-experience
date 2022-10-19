@@ -3,6 +3,7 @@
 DIR_EXEC=$(pwd)
 DIR_APP='/data/app-web-docker'
 DIR_DB='/data/db-web-docker'
+mkdir /data
 mkdir $DIR_APP
 chmod 777 $DIR_APP
 mkdir $DIR_DB
@@ -20,7 +21,7 @@ echo 'finished installer docker ...'
 echo 'installing tools...'
 
 apt update
-apt install -y tar docker-compose docker-compose-plugin
+apt install -y tar docker-compose
 
 echo 'finished installing tools...'
 
@@ -35,6 +36,6 @@ echo 'finished downloading app...'
 echo 'up app...'
 
 cd $DIR_EXEC/app-web-docker
-docker-compose up -d
+docker-compose up -d --build
 
 echo 'finished up app...'
