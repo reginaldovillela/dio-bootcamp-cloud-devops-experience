@@ -1,0 +1,59 @@
+machines = {
+  "master" => {
+    "image" => "debian/bullseye64",
+    "cpu" => "2", 
+    "memory" => "2048", 
+    "ip" => "172.16.100.30", 
+    "ip_master" => "172.16.100.30", 
+    "type" => "MASTER"
+  },
+  "node-01" => {
+    "image" => "debian/bullseye64",
+    "cpu" => "2",
+    "memory" => "2048", 
+    "ip" => "172.16.100.31", 
+    "ip_master" => "172.16.100.30",
+    "type" => "NODE"
+  },
+  "node-02" => {
+    "image" => "debian/bullseye64",
+    "cpu" => "2",
+    "memory" => "2048", 
+    "ip" => "172.16.100.32", 
+    "ip_master" => "172.16.100.30",
+    "type" => "NODE"
+  },
+  "node-03" => {
+    "image" => "debian/bullseye64",
+    "cpu" => "2",
+    "memory" => "2048", 
+    "ip" => "172.16.100.33", 
+    "ip_master" => "172.16.100.30",
+    "type" => "NODE"
+  },
+}
+
+Vagrant.configure("2") do |config|
+
+  machines.each do |name, param|
+    config.vm.define "#{name}" do |machine|
+      machine.vm.box = "#{param["image"]}"
+      machine.vm.hostname = "#{name}"
+      machine.vm.network "public_network", ip: param["ip"]
+      machine.vm.provider "virtualbox" do |vb|
+        vb.name = "#{name}"
+        vb.memory = param["memory"]
+        vb.cpus = param["cpu"]
+        vb.customize ["modifyvm", :id, "--groups", "/lab-docker-swarm"]
+      end
+      machine.vm.provision "shell" do |script|
+        script.path = "iac.sh"
+        script.args= [
+          param["type"], 
+          param["ip"], 
+          param["ip_master"]
+        ]
+      end
+    end
+  end
+end
