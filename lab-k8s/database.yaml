@@ -22,19 +22,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lab-k8s-database
+  name: lab-cicd-gitlab-database
 spec:
   selector:
     matchLabels:
-      app: lab-k8s-database
+      app: lab-cicd-gitlab-database
   template:
     metadata:
       labels:
-        app: lab-k8s-database
+        app: lab-cicd-gitlab-database
     spec:
       containers:
-      - name: lab-k8s-database
-        image: reginaldovillela/lab-k8s-database:1.0
+      - name: lab-cicd-gitlab-database
+        image: mysql:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3306
@@ -45,6 +45,17 @@ spec:
       - name: db-local
         persistentVolumeClaim:
           claimName: db-local
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: MYSQL_DATABASE
 
 ---
 
